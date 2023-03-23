@@ -10,6 +10,7 @@ const CellContainer = styled.div`
 
 const CellContainerDirection = styled.div``;
 
+//TODO implement dandlers for cell focus, blur, and event keys
 function Cell({value, children}) {
     return (
         <CellContainer>

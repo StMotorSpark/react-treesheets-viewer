@@ -6,8 +6,7 @@ const RootGrid = styled.div`
     display: grid;
     grid-template-columns: repeat(${props => props.colCount}, minmax(10vw, 40vw));
 
-    width: 20vw;
-    hight: 20vh;
+    width: 60vw;
     border: 1px solid black;
 `;
 

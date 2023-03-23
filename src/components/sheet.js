@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import Grid from "./grid";
 import Cell from "./cell";
@@ -8,10 +8,9 @@ const SheetContainer = styled.div`
     height: 100%;
 `;
 
-function buildGrid({data}, isSubGrid = false) {
-    // the data is going to be an 2d array
-    // debugger;
-    
+function buildGrid({ data }, isSubGrid = false) {
+    // the data is going to be a 2d array
+
     // let's build out the cells first
     let cells = data.map((row, rowIndex) => {
         return row.map((cell, cellIndex) => {
@@ -20,8 +19,9 @@ function buildGrid({data}, isSubGrid = false) {
                 return <Cell key={cellIndex} value={null} />;
             }
 
+            // if a cell has sub data, we need to build a sub grid
             let subData = null;
-            if(cell.data) {
+            if (cell.data) {
                 subData = buildGrid(cell, true);
             }
 
@@ -31,6 +31,7 @@ function buildGrid({data}, isSubGrid = false) {
         });
     });
 
+    // calculate the column count for use in the grid styling
     let colCount = data[0].length;
 
     return <Grid colCount={colCount} type={isSubGrid ? "" : "root"}>
@@ -38,14 +39,72 @@ function buildGrid({data}, isSubGrid = false) {
     </Grid>;
 }
 
-function Sheet({data, children}) {
-    // we need to take the data and build ouf the grid and cells recirsivly
+// temp data sheet data for development
+const sheetData = {
+    name: "Sheet 1",
+    // data is a 2d array of cells, each cell is an object that can have it's own data
+    data: [
+        [
+            {
+                value: "Branchsheet Development"
+            },
+            null
+        ],
+        [
+            {
+                value: "Idea:",
+                data: [
+                    [
+                        {
+                            value: "Create a Javascript based alternative to Tree Sheets display"
+                        }
+                    ],
+                    [
+                        null
+                    ]
+                ]
+            },
+            {
+                value: "Testing",
+            }
+        ]
+    ]
+}
 
-    let sheetData = buildGrid(data);
+function useSheetState() {
+    const [state, setState] = useState({
+        data: sheetData,
+        cellSelection: {
+            cellId: null,
+            direction: null
+        }
+    });
+
+    //TODO implement and test cell selection
+    const cellSelection = (cellId, direction) => {
+        setState({
+            ...state,
+            cellSelection: {
+                cellId,
+                direction
+            }
+        })
+    };
+
+    return {
+        state
+    }
+}
+
+function Sheet({ children }) {
+    // we need to take the data and build ouf the grid and cells recirsivly
+    const { state } = useSheetState();
+
+    let sheetData = buildGrid(state.data);
 
     return (
         <SheetContainer>
-            Sheet: {data.name}
+            Sheet: {state.data.name}
 
             {sheetData}
 
